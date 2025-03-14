@@ -69,7 +69,7 @@ class acffp_acf_plugin_focuspoint {
 	function include_field( $version = false ) {
 		
 		// load textdomain
-		load_plugin_textdomain( 'acffp', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' ); 
+		//load_plugin_textdomain( 'acffp', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' ); 
 		
 		// include
 		include_once('fields/class-acffp-acf-field-focuspoint-v' . $version . '.php');
