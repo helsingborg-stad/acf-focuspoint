@@ -50,8 +50,13 @@ class acffp_acf_plugin_focuspoint {
 		
 		// include field
 		add_action('acf/include_field_types', array($this, 'include_field')); // v5
+		add_action('init', array($this, 'include_field_textdomain'));
 	}
 	
+	public function include_field_textdomain() {
+		// load textdomain
+		load_plugin_textdomain( 'acffp', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' ); 
+	}
 	
 	/*
 	*  include_field
@@ -67,10 +72,6 @@ class acffp_acf_plugin_focuspoint {
 	*/
 	
 	function include_field( $version = false ) {
-		
-		// load textdomain
-		//load_plugin_textdomain( 'acffp', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' ); 
-		
 		// include
 		include_once('fields/class-acffp-acf-field-focuspoint-v' . $version . '.php');
 	}
@@ -84,5 +85,3 @@ new acffp_acf_plugin_focuspoint();
 
 // class_exists check
 endif;
-	
-?>
