@@ -25,8 +25,10 @@
 
         initialize: function($el) {
 
+            var self = this;
+
             // add attribute to form
-            if (this.o.uploader == 'basic') {
+            if (this.o && this.o.uploader == 'basic') {
                 this.$el.closest('form').attr('enctype', 'multipart/form-data');
             }
 
@@ -38,6 +40,31 @@
                 $fp = $el.find('.acf-focuspoint'),
                 $img = $el.find('.acf-focuspoint-img'),
                 $selection = $el.find('.focuspoint-selection-layer');
+
+            // Manually bind the add/remove buttons for block editor contexts where
+            // ACF's event delegation is not applied to the re-rendered inner block DOM.
+            var $addBtn = $el.find('a[data-name="add"]');
+            var $removeBtn = $el.find('a[data-name="remove"]');
+
+            $addBtn.off('click.focuspoint').on('click.focuspoint', function(e) {
+                e.preventDefault();
+                try {
+                    self.doFocus($el);
+                    self.add();
+                } catch(err) {
+                    console.error('[focuspoint] error in add():', err);
+                }
+            });
+
+            $removeBtn.off('click.focuspoint').on('click.focuspoint', function(e) {
+                e.preventDefault();
+                try {
+                    self.doFocus($el);
+                    self.remove();
+                } catch(err) {
+                    console.error('[focuspoint] error in remove():', err);
+                }
+            });
 
             // Hold/get our values
             var values = {
@@ -156,8 +183,6 @@
                 url: attachment.attributes.url
             };
 
-            //console.log( 'Hep!' );
-
             leftVal = this.$el.find('[data-name="acf-focuspoint-left"]').val();
             topVal = this.$el.find('[data-name="acf-focuspoint-top"]').val();
 
@@ -267,9 +292,7 @@
 
             // search $el for fields of type 'focuspoint'
             acf.get_fields({ type: 'focuspoint' }, $el).each(function() {
-
-                //initialize_field($(this));
-                acf.fields.focuspoint.initialize($el)
+                acf.fields.focuspoint.initialize($(this));
 
             });
 
@@ -307,9 +330,14 @@
     }
 
     // Initialize dynamic block preview (editor).
+    // Listen to all render_block_preview events so focuspoint fields inside inner
+    // blocks (where the block type is not 'focuspoint') are also initialized.
     if (window.acf) {
-        //window.acf.addAction('render_block_preview/type=focuspoint', initialize_field);
-        window.acf.addAction('render_block_preview/type=focuspoint', acf.fields.focuspoint.initialize);
+        window.acf.addAction('render_block_preview', function($el) {
+            acf.get_fields({ type: 'focuspoint' }, $el).each(function() {
+                acf.fields.focuspoint.initialize($(this));
+            });
+        });
     }
 
 
