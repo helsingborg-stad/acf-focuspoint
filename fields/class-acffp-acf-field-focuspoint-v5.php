@@ -10,6 +10,7 @@ if( !class_exists('acffp_acf_field_focuspoint') ) :
 
 class acffp_acf_field_focuspoint extends acf_field {
 	
+	public $settings;
 	
 	/*
 	*  __construct
